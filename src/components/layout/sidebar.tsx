@@ -14,7 +14,7 @@ export function Sidebar() {
   const [hideCompleted, setHideCompleted] = useState(false);
   const { data: plans, isLoading } = usePlans();
   const { theme, toggleTheme } = useTheme();
-  const { completed, isCompleted } = useCompletedPlans();
+  const { completed, isCompleted, toggleCompleted } = useCompletedPlans();
 
   const completedCount = plans?.filter((p) => completed.has(p.filename)).length ?? 0;
 
@@ -73,6 +73,7 @@ export function Sidebar() {
             searchQuery={searchQuery}
             hideCompleted={hideCompleted}
             isCompleted={isCompleted}
+            onToggleCompleted={toggleCompleted}
           />
         )}
       </div>

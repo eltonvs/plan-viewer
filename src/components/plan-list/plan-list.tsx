@@ -6,9 +6,16 @@ interface PlanListProps {
   searchQuery: string;
   hideCompleted: boolean;
   isCompleted: (filename: string) => boolean;
+  onToggleCompleted: (filename: string) => void;
 }
 
-export function PlanList({ plans, searchQuery, hideCompleted, isCompleted }: PlanListProps) {
+export function PlanList({
+  plans,
+  searchQuery,
+  hideCompleted,
+  isCompleted,
+  onToggleCompleted,
+}: PlanListProps) {
   const query = searchQuery.toLowerCase();
   const filtered = plans.filter((p) => {
     if (
@@ -42,7 +49,12 @@ export function PlanList({ plans, searchQuery, hideCompleted, isCompleted }: Pla
       {active.length > 0 && (
         <div className="space-y-1">
           {active.map((plan) => (
-            <PlanListItem key={plan.filename} plan={plan} isCompleted={false} />
+            <PlanListItem
+              key={plan.filename}
+              plan={plan}
+              isCompleted={false}
+              onToggleCompleted={() => onToggleCompleted(plan.filename)}
+            />
           ))}
         </div>
       )}
@@ -58,7 +70,12 @@ export function PlanList({ plans, searchQuery, hideCompleted, isCompleted }: Pla
       {completed.length > 0 && (
         <div className="space-y-1">
           {completed.map((plan) => (
-            <PlanListItem key={plan.filename} plan={plan} isCompleted />
+            <PlanListItem
+              key={plan.filename}
+              plan={plan}
+              isCompleted
+              onToggleCompleted={() => onToggleCompleted(plan.filename)}
+            />
           ))}
         </div>
       )}

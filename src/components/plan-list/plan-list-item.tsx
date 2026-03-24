@@ -1,6 +1,8 @@
+import type { MouseEvent } from "react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
-import { Check } from "lucide-react";
+import { Check, Circle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { PlanMeta } from "@/types/plan";
 
@@ -31,9 +33,10 @@ function formatBytes(bytes: number): string {
 interface PlanListItemProps {
   plan: PlanMeta;
   isCompleted: boolean;
+  onToggleCompleted: () => void;
 }
 
-export function PlanListItem({ plan, isCompleted }: PlanListItemProps) {
+export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListItemProps) {
   const matchRoute = useMatchRoute();
   const isActive = !!matchRoute({
     to: "/plan/$filename",
@@ -44,6 +47,12 @@ export function PlanListItem({ plan, isCompleted }: PlanListItemProps) {
     plan.title !== plan.filename.replace(/\.md$/, "").replaceAll("-", " ")
       ? plan.title
       : humanizeFilename(plan.filename);
+
+  function handleToggle(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggleCompleted();
+  }
 
   return (
     <Link
@@ -56,10 +65,21 @@ export function PlanListItem({ plan, isCompleted }: PlanListItemProps) {
       )}
     >
       <div className="flex items-start gap-2">
-        {isCompleted && (
+        {isCompleted ? (
           <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
             <Check className="h-2.5 w-2.5" strokeWidth={3} />
           </span>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger
+              onClick={handleToggle}
+              className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground/30 text-transparent opacity-0 transition-opacity group-hover:opacity-100 hover:border-primary/50 hover:text-primary/40"
+              aria-label="Mark as implemented"
+            >
+              <Circle className="h-2.5 w-2.5" />
+            </TooltipTrigger>
+            <TooltipContent side="right">Mark as implemented</TooltipContent>
+          </Tooltip>
         )}
         <div className="min-w-0 flex-1">
           <p
