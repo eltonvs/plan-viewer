@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import { usePlanContent } from "@/hooks/use-plan-content";
+import { useCompletedPlans } from "@/hooks/use-completed-plans";
 import { PlanHeader } from "./plan-header";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 
@@ -13,6 +14,7 @@ interface PlanViewerProps {
 
 export function PlanViewer({ filename }: PlanViewerProps) {
   const { data: plan, isLoading, error } = usePlanContent(filename);
+  const { isCompleted, toggleCompleted } = useCompletedPlans();
 
   if (isLoading) return <LoadingSkeleton />;
   if (error || !plan) {
@@ -30,6 +32,8 @@ export function PlanViewer({ filename }: PlanViewerProps) {
         filename={plan.filename}
         modifiedAt={plan.modifiedAt}
         sizeBytes={plan.sizeBytes}
+        isCompleted={isCompleted(plan.filename)}
+        onToggleCompleted={() => toggleCompleted(plan.filename)}
       />
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-6 py-6">

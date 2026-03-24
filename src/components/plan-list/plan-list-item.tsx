@@ -1,4 +1,5 @@
 import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { PlanMeta } from "@/types/plan";
@@ -29,34 +30,55 @@ function formatBytes(bytes: number): string {
 
 interface PlanListItemProps {
   plan: PlanMeta;
+  isCompleted: boolean;
 }
 
-export function PlanListItem({ plan }: PlanListItemProps) {
+export function PlanListItem({ plan, isCompleted }: PlanListItemProps) {
   const matchRoute = useMatchRoute();
   const isActive = !!matchRoute({
     to: "/plan/$filename",
     params: { filename: plan.filename },
   });
 
+  const displayTitle =
+    plan.title !== plan.filename.replace(/\.md$/, "").replaceAll("-", " ")
+      ? plan.title
+      : humanizeFilename(plan.filename);
+
   return (
     <Link
       to="/plan/$filename"
       params={{ filename: plan.filename }}
       className={cn(
-        "block rounded-lg border border-transparent px-3 py-2.5 transition-colors",
+        "group relative block rounded-lg border border-transparent px-3 py-2.5 transition-colors",
         isActive ? "border-primary/30 bg-accent text-accent-foreground" : "hover:bg-muted",
+        isCompleted && !isActive && "opacity-50",
       )}
     >
-      <p className="truncate text-sm font-medium">
-        {plan.title !== plan.filename.replace(/\.md$/, "").replaceAll("-", " ")
-          ? plan.title
-          : humanizeFilename(plan.filename)}
-      </p>
-      <div className="mt-1 flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">{formatRelativeTime(plan.modifiedAt)}</span>
-        <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">
-          {formatBytes(plan.sizeBytes)}
-        </Badge>
+      <div className="flex items-start gap-2">
+        {isCompleted && (
+          <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <p
+            className={cn(
+              "truncate text-sm font-medium",
+              isCompleted && "line-through decoration-muted-foreground/50",
+            )}
+          >
+            {displayTitle}
+          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {formatRelativeTime(plan.modifiedAt)}
+            </span>
+            <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">
+              {formatBytes(plan.sizeBytes)}
+            </Badge>
+          </div>
+        </div>
       </div>
     </Link>
   );

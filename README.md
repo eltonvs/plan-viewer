@@ -44,7 +44,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 By default, the app reads plans from `~/.claude/plans/`. To change the directory, edit `vite.config.ts`:
 
 ```ts
-plansApiPlugin({ plansDir: "/path/to/your/plans" })
+plansApiPlugin({ plansDir: "/path/to/your/plans" });
 ```
 
 ## Tech Stack
@@ -75,4 +75,3 @@ vp build
 # Preview production build
 vp preview
 ```
-
