@@ -6,6 +6,7 @@ export function usePlanContent(filename: string) {
     queryKey: ["plan", filename],
     queryFn: () => fetchPlan(filename),
     staleTime: 30_000,
+    refetchInterval: 5_000,
     enabled: !!filename,
   });
 }
