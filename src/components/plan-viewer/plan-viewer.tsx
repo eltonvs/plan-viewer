@@ -30,6 +30,7 @@ export function PlanViewer({ filename }: PlanViewerProps) {
       <PlanHeader
         title={plan.title}
         filename={plan.filename}
+        filePath={plan.filePath}
         modifiedAt={plan.modifiedAt}
         sizeBytes={plan.sizeBytes}
         isCompleted={isCompleted(plan.filename)}

@@ -1,4 +1,5 @@
-import { Check, Circle } from "lucide-react";
+import { useState } from "react";
+import { Check, Circle, Copy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -6,6 +7,7 @@ import { cn } from "@/lib/utils";
 interface PlanHeaderProps {
   title: string;
   filename: string;
+  filePath: string;
   modifiedAt: string;
   sizeBytes: number;
   isCompleted: boolean;
@@ -31,11 +33,20 @@ function formatRelativeTime(dateStr: string): string {
 export function PlanHeader({
   title,
   filename,
+  filePath,
   modifiedAt,
   sizeBytes,
   isCompleted,
   onToggleCompleted,
 }: PlanHeaderProps) {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    void navigator.clipboard.writeText(filePath);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
   return (
     <div className="flex items-center justify-between border-b border-border px-6 py-4">
       <div className="flex min-w-0 items-center gap-3">
@@ -65,7 +76,19 @@ export function PlanHeader({
           >
             {title}
           </h1>
-          <p className="mt-0.5 font-mono text-xs text-muted-foreground">{filename}</p>
+          <div className="group/path mt-0.5 flex items-center gap-1">
+            <p className="truncate font-mono text-xs text-muted-foreground">{filename}</p>
+            <Tooltip>
+              <TooltipTrigger
+                onClick={handleCopy}
+                className="shrink-0 rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/path:opacity-100"
+                aria-label="Copy path"
+              >
+                {copied ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+              </TooltipTrigger>
+              <TooltipContent>{copied ? "Copied!" : "Copy path"}</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">

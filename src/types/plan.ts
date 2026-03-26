@@ -6,5 +6,6 @@ export interface PlanMeta {
 }
 
 export interface PlanDetail extends PlanMeta {
+  filePath: string;
   content: string;
 }

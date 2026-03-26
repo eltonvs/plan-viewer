@@ -82,6 +82,7 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
           res.end(
             JSON.stringify({
               filename,
+              filePath,
               title: extractTitle(content, filename),
               content,
               modifiedAt: stat.mtime.toISOString(),
