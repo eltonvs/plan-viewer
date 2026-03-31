@@ -16,7 +16,10 @@ function renderInlineMarkdown(text: string): ReactNode {
     const m = match[0];
     if (m.startsWith("`")) {
       parts.push(
-        <code key={match.index} className="break-all rounded bg-muted px-1 py-0.5 font-mono text-xs">
+        <code
+          key={match.index}
+          className="break-all rounded bg-muted px-1 py-0.5 font-mono text-xs"
+        >
           {m.slice(1, -1)}
         </code>,
       );
