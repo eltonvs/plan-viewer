@@ -3,21 +3,52 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark-dimmed.css";
 import type { Components } from "react-markdown";
+import { slugify } from "@/lib/headings";
+import { Children, type ReactNode } from "react";
+
+function getTextContent(children: ReactNode): string {
+  return Children.toArray(children)
+    .map((child) => {
+      if (typeof child === "string") return child;
+      if (typeof child === "number") return String(child);
+      if (typeof child === "object" && child !== null && "props" in child) {
+        return getTextContent((child as { props: { children?: ReactNode } }).props.children);
+      }
+      return "";
+    })
+    .join("");
+}
 
 const components: Components = {
   h1: ({ children }) => (
-    <h1 className="mb-4 mt-8 font-heading text-2xl font-bold first:mt-0">{children}</h1>
+    <h1 id={slugify(getTextContent(children))} className="mb-4 mt-8 font-heading text-2xl font-bold first:mt-0">
+      {children}
+    </h1>
   ),
   h2: ({ children }) => (
-    <h2 className="mb-3 mt-8 border-b border-border pb-2 font-heading text-xl font-semibold">
+    <h2 id={slugify(getTextContent(children))} className="mb-3 mt-8 border-b border-border pb-2 font-heading text-xl font-semibold">
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mb-2 mt-6 font-heading text-lg font-semibold">{children}</h3>
+    <h3 id={slugify(getTextContent(children))} className="mb-2 mt-6 font-heading text-lg font-semibold">
+      {children}
+    </h3>
   ),
   h4: ({ children }) => (
-    <h4 className="mb-2 mt-4 font-heading text-base font-semibold">{children}</h4>
+    <h4 id={slugify(getTextContent(children))} className="mb-2 mt-4 font-heading text-base font-semibold">
+      {children}
+    </h4>
+  ),
+  h5: ({ children }) => (
+    <h5 id={slugify(getTextContent(children))} className="mb-1 mt-3 font-heading text-sm font-semibold">
+      {children}
+    </h5>
+  ),
+  h6: ({ children }) => (
+    <h6 id={slugify(getTextContent(children))} className="mb-1 mt-3 font-heading text-xs font-semibold">
+      {children}
+    </h6>
   ),
   p: ({ children }) => <p className="mb-4 leading-7 text-foreground/90">{children}</p>,
   ul: ({ children }) => (
