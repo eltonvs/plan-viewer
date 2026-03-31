@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Check, Circle, Copy } from "lucide-react";
+import { Check, Circle, Copy, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "@tanstack/react-router";
 
 interface PlanHeaderProps {
   title: string;
@@ -39,6 +40,7 @@ export function PlanHeader({
   isCompleted,
   onToggleCompleted,
 }: PlanHeaderProps) {
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
@@ -102,6 +104,16 @@ export function PlanHeader({
           {formatBytes(sizeBytes)}
         </Badge>
         <span className="text-xs text-muted-foreground">{formatRelativeTime(modifiedAt)}</span>
+        <Tooltip>
+          <TooltipTrigger
+            onClick={() => navigate({ to: "/" })}
+            className="ml-1 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Close plan"
+          >
+            <X className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>Close</TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );
