@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-const STORAGE_KEY = "claude-plan-viewer:completed";
+const STORAGE_KEY = "plan-viewer:completed";
 
 function getCompletedSet(): Set<string> {
   try {
