@@ -94,12 +94,19 @@ export function PlanHeader({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        {isCompleted && (
-          <Badge className="bg-primary/15 text-primary hover:bg-primary/15">
-            <Circle className="mr-1 h-2 w-2 fill-current" />
-            Implemented
-          </Badge>
-        )}
+        <div
+          className={cn(
+            "grid transition-all duration-300 ease-in-out",
+            isCompleted ? "grid-cols-[1fr] opacity-100" : "grid-cols-[0fr] opacity-0",
+          )}
+        >
+          <div className="overflow-hidden">
+            <Badge className="whitespace-nowrap bg-primary/15 text-primary hover:bg-primary/15">
+              <Circle className="mr-1 h-2 w-2 fill-current" />
+              Implemented
+            </Badge>
+          </div>
+        </div>
         <Badge variant="secondary" className="font-mono text-xs">
           {formatBytes(sizeBytes)}
         </Badge>

@@ -4,6 +4,7 @@ import { usePlanContent } from "@/hooks/use-plan-content";
 import { useCompletedPlans } from "@/hooks/use-completed-plans";
 import { useActiveHeading } from "@/hooks/use-active-heading";
 import { extractHeadings } from "@/lib/headings";
+import { cn } from "@/lib/utils";
 import { PlanHeader } from "./plan-header";
 import { OutlinePanel } from "./outline-panel";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
@@ -69,14 +70,34 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
         isCompleted={isCompleted(plan.filePath)}
         onToggleCompleted={() => toggleCompleted(plan.filePath)}
       />
-      <div className="flex min-h-0 flex-1">
+      <div className="relative flex min-h-0 flex-1 overflow-hidden">
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto">
-          <div className="relative mx-auto max-w-4xl px-6 py-6">
-            {!showOutline && headings.length > 0 && (
+          <div className="mx-auto max-w-4xl px-6 py-6">
+            <Suspense fallback={<LoadingSkeleton />}>
+              <MarkdownRenderer content={plan.content} />
+            </Suspense>
+          </div>
+        </div>
+        {headings.length > 0 && (
+          <>
+            <div
+              className={cn(
+                "transition-[margin] duration-300 ease-in-out",
+                showOutline ? "mr-0" : "-mr-56 xl:-mr-72 2xl:-mr-80",
+              )}
+            >
+              <OutlinePanel
+                headings={headings}
+                activeId={activeId}
+                onHeadingClick={handleHeadingClick}
+                onClose={() => toggleOutline(false)}
+              />
+            </div>
+            {!showOutline && (
               <Tooltip>
                 <TooltipTrigger
                   onClick={() => toggleOutline(true)}
-                  className="absolute right-6 top-6 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   aria-label="Show outline"
                 >
                   <List className="h-4 w-4" />
@@ -84,18 +105,7 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
                 <TooltipContent>Show outline</TooltipContent>
               </Tooltip>
             )}
-            <Suspense fallback={<LoadingSkeleton />}>
-              <MarkdownRenderer content={plan.content} />
-            </Suspense>
-          </div>
-        </div>
-        {showOutline && (
-          <OutlinePanel
-            headings={headings}
-            activeId={activeId}
-            onHeadingClick={handleHeadingClick}
-            onClose={() => toggleOutline(false)}
-          />
+          </>
         )}
       </div>
     </div>

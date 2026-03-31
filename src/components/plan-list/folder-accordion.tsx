@@ -57,50 +57,59 @@ export function FolderAccordion({
           </Tooltip>
         )}
       </button>
-      {expanded && (
-        <div className="space-y-1 px-2 pb-2">
-          {plans.length === 0 && (
-            <p className="px-3 py-2 text-xs text-muted-foreground">No .md files found</p>
-          )}
-          {active.map((plan) => (
-            <PlanListItem
-              key={plan.relativePath}
-              plan={plan}
-              isCompleted={false}
-              onToggleCompleted={() => onToggleCompleted(plan.filePath)}
-            />
-          ))}
-          {completed.length > 0 && (
-            <>
-              <button
-                type="button"
-                onClick={() => setImplementedExpanded((v) => !v)}
-                className="flex w-full items-center gap-2 px-3 py-1"
-              >
-                <div className="h-px flex-1 bg-border" />
-                <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  {implementedExpanded ? (
-                    <ChevronDown className="h-2.5 w-2.5" />
-                  ) : (
-                    <ChevronRight className="h-2.5 w-2.5" />
-                  )}
-                  Implemented ({completed.length})
-                </span>
-                <div className="h-px flex-1 bg-border" />
-              </button>
-              {implementedExpanded &&
-                completed.map((plan) => (
-                  <PlanListItem
-                    key={plan.relativePath}
-                    plan={plan}
-                    isCompleted
-                    onToggleCompleted={() => onToggleCompleted(plan.filePath)}
-                  />
-                ))}
-            </>
-          )}
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-1 px-2 pb-2">
+            {plans.length === 0 && (
+              <p className="px-3 py-2 text-xs text-muted-foreground">No .md files found</p>
+            )}
+            {active.map((plan) => (
+              <PlanListItem
+                key={plan.relativePath}
+                plan={plan}
+                isCompleted={false}
+                onToggleCompleted={() => onToggleCompleted(plan.filePath)}
+              />
+            ))}
+            {completed.length > 0 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setImplementedExpanded((v) => !v)}
+                  className="flex w-full items-center gap-2 px-3 py-1"
+                >
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {implementedExpanded ? (
+                      <ChevronDown className="h-2.5 w-2.5" />
+                    ) : (
+                      <ChevronRight className="h-2.5 w-2.5" />
+                    )}
+                    Implemented ({completed.length})
+                  </span>
+                  <div className="h-px flex-1 bg-border" />
+                </button>
+                <div
+                  className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${implementedExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                >
+                  <div className="overflow-hidden">
+                    {completed.map((plan) => (
+                      <PlanListItem
+                        key={plan.relativePath}
+                        plan={plan}
+                        isCompleted
+                        onToggleCompleted={() => onToggleCompleted(plan.filePath)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
