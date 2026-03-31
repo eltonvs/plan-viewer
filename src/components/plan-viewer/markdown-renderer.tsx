@@ -21,32 +21,50 @@ function getTextContent(children: ReactNode): string {
 
 const components: Components = {
   h1: ({ children }) => (
-    <h1 id={slugify(getTextContent(children))} className="mb-4 mt-8 font-heading text-2xl font-bold first:mt-0">
+    <h1
+      id={slugify(getTextContent(children))}
+      className="mb-4 mt-8 font-heading text-2xl font-bold first:mt-0"
+    >
       {children}
     </h1>
   ),
   h2: ({ children }) => (
-    <h2 id={slugify(getTextContent(children))} className="mb-3 mt-8 border-b border-border pb-2 font-heading text-xl font-semibold">
+    <h2
+      id={slugify(getTextContent(children))}
+      className="mb-3 mt-8 border-b border-border pb-2 font-heading text-xl font-semibold"
+    >
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 id={slugify(getTextContent(children))} className="mb-2 mt-6 font-heading text-lg font-semibold">
+    <h3
+      id={slugify(getTextContent(children))}
+      className="mb-2 mt-6 font-heading text-lg font-semibold"
+    >
       {children}
     </h3>
   ),
   h4: ({ children }) => (
-    <h4 id={slugify(getTextContent(children))} className="mb-2 mt-4 font-heading text-base font-semibold">
+    <h4
+      id={slugify(getTextContent(children))}
+      className="mb-2 mt-4 font-heading text-base font-semibold"
+    >
       {children}
     </h4>
   ),
   h5: ({ children }) => (
-    <h5 id={slugify(getTextContent(children))} className="mb-1 mt-3 font-heading text-sm font-semibold">
+    <h5
+      id={slugify(getTextContent(children))}
+      className="mb-1 mt-3 font-heading text-sm font-semibold"
+    >
       {children}
     </h5>
   ),
   h6: ({ children }) => (
-    <h6 id={slugify(getTextContent(children))} className="mb-1 mt-3 font-heading text-xs font-semibold">
+    <h6
+      id={slugify(getTextContent(children))}
+      className="mb-1 mt-3 font-heading text-xs font-semibold"
+    >
       {children}
     </h6>
   ),
