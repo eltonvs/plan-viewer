@@ -1,12 +1,22 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useCallback, useRef, useState } from "react";
+import { List } from "lucide-react";
 import { usePlanContent } from "@/hooks/use-plan-content";
 import { useCompletedPlans } from "@/hooks/use-completed-plans";
+import { useActiveHeading } from "@/hooks/use-active-heading";
+import { extractHeadings } from "@/lib/headings";
 import { PlanHeader } from "./plan-header";
+import { OutlinePanel } from "./outline-panel";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const MarkdownRenderer = lazy(() =>
   import("./markdown-renderer").then((m) => ({ default: m.MarkdownRenderer })),
 );
+
+function getInitialOutlineVisible(): boolean {
+  const stored = localStorage.getItem("outline-visible");
+  return stored === null ? true : stored === "true";
+}
 
 interface PlanViewerProps {
   sourceId: string;
@@ -16,6 +26,26 @@ interface PlanViewerProps {
 export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
   const { data: plan, isLoading, error } = usePlanContent(sourceId, relativePath);
   const { isCompleted, toggleCompleted } = useCompletedPlans();
+  const [outlineVisible, setOutlineVisible] = useState(getInitialOutlineVisible);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const headings = plan ? extractHeadings(plan.content) : [];
+  const headingIds = headings.map((h) => h.id);
+  const activeId = useActiveHeading(headingIds, scrollContainerRef);
+
+  const toggleOutline = useCallback((visible: boolean) => {
+    setOutlineVisible(visible);
+    localStorage.setItem("outline-visible", String(visible));
+  }, []);
+
+  const handleHeadingClick = useCallback((id: string) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const el = container.querySelector(`#${CSS.escape(id)}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   if (isLoading) return <LoadingSkeleton />;
   if (error || !plan) {
@@ -25,6 +55,8 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
       </div>
     );
   }
+
+  const showOutline = outlineVisible && headings.length > 0;
 
   return (
     <div className="flex h-full flex-col">
@@ -37,12 +69,34 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
         isCompleted={isCompleted(plan.filePath)}
         onToggleCompleted={() => toggleCompleted(plan.filePath)}
       />
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-4xl px-6 py-6">
-          <Suspense fallback={<LoadingSkeleton />}>
-            <MarkdownRenderer content={plan.content} />
-          </Suspense>
+      <div className="flex min-h-0 flex-1">
+        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto">
+          <div className="relative mx-auto max-w-4xl px-6 py-6">
+            {!showOutline && headings.length > 0 && (
+              <Tooltip>
+                <TooltipTrigger
+                  onClick={() => toggleOutline(true)}
+                  className="absolute right-6 top-6 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  aria-label="Show outline"
+                >
+                  <List className="h-4 w-4" />
+                </TooltipTrigger>
+                <TooltipContent>Show outline</TooltipContent>
+              </Tooltip>
+            )}
+            <Suspense fallback={<LoadingSkeleton />}>
+              <MarkdownRenderer content={plan.content} />
+            </Suspense>
+          </div>
         </div>
+        {showOutline && (
+          <OutlinePanel
+            headings={headings}
+            activeId={activeId}
+            onHeadingClick={handleHeadingClick}
+            onClose={() => toggleOutline(false)}
+          />
+        )}
       </div>
     </div>
   );
