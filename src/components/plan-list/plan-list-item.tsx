@@ -39,14 +39,16 @@ interface PlanListItemProps {
 export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListItemProps) {
   const matchRoute = useMatchRoute();
   const isActive = !!matchRoute({
-    to: "/plan/$filename",
-    params: { filename: plan.filename },
+    to: "/plan/$sourceId/$",
+    params: { sourceId: plan.sourceId, _splat: plan.relativePath },
   });
 
   const displayTitle =
     plan.title !== plan.filename.replace(/\.md$/, "").replaceAll("-", " ")
       ? plan.title
       : humanizeFilename(plan.filename);
+
+  const hasSubfolder = plan.relativePath.includes("/");
 
   function handleToggle(e: MouseEvent) {
     e.preventDefault();
@@ -56,8 +58,8 @@ export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListI
 
   return (
     <Link
-      to="/plan/$filename"
-      params={{ filename: plan.filename }}
+      to="/plan/$sourceId/$"
+      params={{ sourceId: plan.sourceId, _splat: plan.relativePath }}
       className={cn(
         "group relative block rounded-lg border border-transparent px-3 py-2.5 transition-colors",
         isActive ? "border-primary/30 bg-accent text-accent-foreground" : "hover:bg-muted",
@@ -91,6 +93,11 @@ export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListI
             {displayTitle}
           </p>
           <div className="mt-1 flex items-center gap-2">
+            {hasSubfolder && (
+              <span className="truncate text-xs text-muted-foreground/60">
+                {plan.relativePath.split("/").slice(0, -1).join("/")}
+              </span>
+            )}
             <span className="text-xs text-muted-foreground">
               {formatRelativeTime(plan.modifiedAt)}
             </span>

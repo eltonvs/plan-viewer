@@ -7,7 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 interface PlanHeaderProps {
   title: string;
-  filename: string;
+  relativePath: string;
   filePath: string;
   modifiedAt: string;
   sizeBytes: number;
@@ -33,7 +33,7 @@ function formatRelativeTime(dateStr: string): string {
 
 export function PlanHeader({
   title,
-  filename,
+  relativePath,
   filePath,
   modifiedAt,
   sizeBytes,
@@ -79,7 +79,7 @@ export function PlanHeader({
             {title}
           </h1>
           <div className="group/path mt-0.5 flex items-center gap-1">
-            <p className="truncate font-mono text-xs text-muted-foreground">{filename}</p>
+            <p className="truncate font-mono text-xs text-muted-foreground">{relativePath}</p>
             <Tooltip>
               <TooltipTrigger
                 onClick={handleCopy}

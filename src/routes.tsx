@@ -15,10 +15,10 @@ const indexRoute = createRoute({
 
 const planRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/plan/$filename",
+  path: "/plan/$sourceId/$",
   component: () => {
-    const { filename } = planRoute.useParams();
-    return <PlanViewer filename={filename} />;
+    const { sourceId, _splat: relativePath } = planRoute.useParams();
+    return <PlanViewer sourceId={sourceId} relativePath={relativePath ?? ""} />;
   },
 });
 

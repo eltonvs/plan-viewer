@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { EyeOff, Eye, FolderOpen, Moon, Sun, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { EyeOff, Eye, FolderOpen, Moon, Sun } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlans } from "@/hooks/use-plans";
 import { useTheme } from "@/hooks/use-theme";
 import { useCompletedPlans } from "@/hooks/use-completed-plans";
-import { PlanList } from "@/components/plan-list/plan-list";
 import { PlanSearch } from "@/components/plan-list/plan-search";
+import { FolderAccordion } from "@/components/plan-list/folder-accordion";
 import { useFolderContext } from "@/context/folder-context";
 
 export function Sidebar() {
@@ -16,9 +16,34 @@ export function Sidebar() {
   const { data: plans, isLoading } = usePlans();
   const { theme, toggleTheme } = useTheme();
   const { isCompleted, toggleCompleted } = useCompletedPlans();
-  const { folderName, isSupported, openFolder, closeFolder } = useFolderContext();
+  const { sources, isSupported, addFolder, removeFolder } = useFolderContext();
 
   const completedCount = plans?.filter((p) => isCompleted(p.filePath)).length ?? 0;
+
+  const filteredBySource = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    const filtered = (plans ?? []).filter((p) => {
+      if (
+        query &&
+        !p.title.toLowerCase().includes(query) &&
+        !p.relativePath.toLowerCase().includes(query)
+      ) {
+        return false;
+      }
+      if (hideCompleted && isCompleted(p.filePath)) return false;
+      return true;
+    });
+
+    const grouped = new Map<string, typeof filtered>();
+    for (const source of sources) {
+      grouped.set(source.id, []);
+    }
+    for (const plan of filtered) {
+      const list = grouped.get(plan.sourceId);
+      if (list) list.push(plan);
+    }
+    return grouped;
+  }, [plans, sources, searchQuery, hideCompleted, isCompleted]);
 
   return (
     <div className="flex h-full w-80 flex-col border-r border-border bg-sidebar">
@@ -70,56 +95,30 @@ export function Sidebar() {
             ))}
           </div>
         ) : (
-          <PlanList
-            plans={plans ?? []}
-            searchQuery={searchQuery}
-            hideCompleted={hideCompleted}
-            isCompleted={isCompleted}
-            onToggleCompleted={toggleCompleted}
-          />
+          sources.map((source) => (
+            <FolderAccordion
+              key={source.id}
+              label={source.label}
+              plans={filteredBySource.get(source.id) ?? []}
+              isCompleted={isCompleted}
+              onToggleCompleted={toggleCompleted}
+              onRemove={source.id !== "api" ? () => removeFolder(source.id) : undefined}
+            />
+          ))
         )}
       </div>
       {isSupported && (
         <>
           <Separator />
-          <div className="flex items-center gap-2 px-4 py-2.5">
-            {folderName ? (
-              <>
-                <FolderOpen className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 truncate text-xs text-muted-foreground">{folderName}</span>
-                <div className="ml-auto flex shrink-0 items-center gap-0.5">
-                  <Tooltip>
-                    <TooltipTrigger
-                      onClick={() => void openFolder()}
-                      className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                      aria-label="Change folder"
-                    >
-                      <FolderOpen className="h-3.5 w-3.5" />
-                    </TooltipTrigger>
-                    <TooltipContent>Change folder</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger
-                      onClick={closeFolder}
-                      className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                      aria-label="Close folder"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </TooltipTrigger>
-                    <TooltipContent>Close folder</TooltipContent>
-                  </Tooltip>
-                </div>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void openFolder()}
-                className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <FolderOpen className="h-3.5 w-3.5" />
-                Open Folder
-              </button>
-            )}
+          <div className="px-4 py-2.5">
+            <button
+              type="button"
+              onClick={() => void addFolder()}
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <FolderOpen className="h-3.5 w-3.5" />
+              Open Folder
+            </button>
           </div>
         </>
       )}

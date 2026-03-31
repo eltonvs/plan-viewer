@@ -9,18 +9,19 @@ const MarkdownRenderer = lazy(() =>
 );
 
 interface PlanViewerProps {
-  filename: string;
+  sourceId: string;
+  relativePath: string;
 }
 
-export function PlanViewer({ filename }: PlanViewerProps) {
-  const { data: plan, isLoading, error } = usePlanContent(filename);
+export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
+  const { data: plan, isLoading, error } = usePlanContent(sourceId, relativePath);
   const { isCompleted, toggleCompleted } = useCompletedPlans();
 
   if (isLoading) return <LoadingSkeleton />;
   if (error || !plan) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
-        <p>Failed to load plan: {filename}</p>
+        <p>Failed to load plan: {relativePath}</p>
       </div>
     );
   }
@@ -29,7 +30,7 @@ export function PlanViewer({ filename }: PlanViewerProps) {
     <div className="flex h-full flex-col">
       <PlanHeader
         title={plan.title}
-        filename={plan.filename}
+        relativePath={plan.relativePath}
         filePath={plan.filePath}
         modifiedAt={plan.modifiedAt}
         sizeBytes={plan.sizeBytes}
