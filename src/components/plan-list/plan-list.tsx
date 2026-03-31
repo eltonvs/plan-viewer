@@ -5,8 +5,8 @@ interface PlanListProps {
   plans: PlanMeta[];
   searchQuery: string;
   hideCompleted: boolean;
-  isCompleted: (filename: string) => boolean;
-  onToggleCompleted: (filename: string) => void;
+  isCompleted: (filePath: string) => boolean;
+  onToggleCompleted: (filePath: string) => void;
 }
 
 export function PlanList({
@@ -25,7 +25,7 @@ export function PlanList({
     ) {
       return false;
     }
-    if (hideCompleted && isCompleted(p.filename)) return false;
+    if (hideCompleted && isCompleted(p.filePath)) return false;
     return true;
   });
 
@@ -41,8 +41,8 @@ export function PlanList({
     );
   }
 
-  const active = filtered.filter((p) => !isCompleted(p.filename));
-  const completed = filtered.filter((p) => isCompleted(p.filename));
+  const active = filtered.filter((p) => !isCompleted(p.filePath));
+  const completed = filtered.filter((p) => isCompleted(p.filePath));
 
   return (
     <div className="p-2">
@@ -53,7 +53,7 @@ export function PlanList({
               key={plan.filename}
               plan={plan}
               isCompleted={false}
-              onToggleCompleted={() => onToggleCompleted(plan.filename)}
+              onToggleCompleted={() => onToggleCompleted(plan.filePath)}
             />
           ))}
         </div>
@@ -74,7 +74,7 @@ export function PlanList({
               key={plan.filename}
               plan={plan}
               isCompleted
-              onToggleCompleted={() => onToggleCompleted(plan.filename)}
+              onToggleCompleted={() => onToggleCompleted(plan.filePath)}
             />
           ))}
         </div>

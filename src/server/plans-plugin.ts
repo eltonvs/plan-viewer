@@ -50,6 +50,7 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
             ]);
             return {
               filename,
+              filePath,
               title: extractTitle(content, filename),
               modifiedAt: stat.mtime.toISOString(),
               sizeBytes: stat.size,

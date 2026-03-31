@@ -33,8 +33,8 @@ export function PlanViewer({ filename }: PlanViewerProps) {
         filePath={plan.filePath}
         modifiedAt={plan.modifiedAt}
         sizeBytes={plan.sizeBytes}
-        isCompleted={isCompleted(plan.filename)}
-        onToggleCompleted={() => toggleCompleted(plan.filename)}
+        isCompleted={isCompleted(plan.filePath)}
+        onToggleCompleted={() => toggleCompleted(plan.filePath)}
       />
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-6 py-6">

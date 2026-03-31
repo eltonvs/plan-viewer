@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EyeOff, Eye, Moon, Sun } from "lucide-react";
+import { EyeOff, Eye, FolderOpen, Moon, Sun, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -8,15 +8,17 @@ import { useTheme } from "@/hooks/use-theme";
 import { useCompletedPlans } from "@/hooks/use-completed-plans";
 import { PlanList } from "@/components/plan-list/plan-list";
 import { PlanSearch } from "@/components/plan-list/plan-search";
+import { useFolderContext } from "@/context/folder-context";
 
 export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideCompleted, setHideCompleted] = useState(false);
   const { data: plans, isLoading } = usePlans();
   const { theme, toggleTheme } = useTheme();
-  const { completed, isCompleted, toggleCompleted } = useCompletedPlans();
+  const { isCompleted, toggleCompleted } = useCompletedPlans();
+  const { folderName, isSupported, openFolder, closeFolder } = useFolderContext();
 
-  const completedCount = plans?.filter((p) => completed.has(p.filename)).length ?? 0;
+  const completedCount = plans?.filter((p) => isCompleted(p.filePath)).length ?? 0;
 
   return (
     <div className="flex h-full w-80 flex-col border-r border-border bg-sidebar">
@@ -77,6 +79,50 @@ export function Sidebar() {
           />
         )}
       </div>
+      {isSupported && (
+        <>
+          <Separator />
+          <div className="flex items-center gap-2 px-4 py-2.5">
+            {folderName ? (
+              <>
+                <FolderOpen className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 truncate text-xs text-muted-foreground">{folderName}</span>
+                <div className="ml-auto flex shrink-0 items-center gap-0.5">
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={() => void openFolder()}
+                      className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label="Change folder"
+                    >
+                      <FolderOpen className="h-3.5 w-3.5" />
+                    </TooltipTrigger>
+                    <TooltipContent>Change folder</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={closeFolder}
+                      className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label="Close folder"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </TooltipTrigger>
+                    <TooltipContent>Close folder</TooltipContent>
+                  </Tooltip>
+                </div>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void openFolder()}
+                className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <FolderOpen className="h-3.5 w-3.5" />
+                Open Folder
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

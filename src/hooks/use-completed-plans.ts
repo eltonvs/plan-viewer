@@ -39,18 +39,18 @@ function notify() {
 export function useCompletedPlans() {
   const completed = useSyncExternalStore(subscribe, getSnapshot, () => new Set<string>());
 
-  const toggleCompleted = useCallback((filename: string) => {
+  const toggleCompleted = useCallback((filePath: string) => {
     const current = getCompletedSet();
-    if (current.has(filename)) {
-      current.delete(filename);
+    if (current.has(filePath)) {
+      current.delete(filePath);
     } else {
-      current.add(filename);
+      current.add(filePath);
     }
     persist(current);
     notify();
   }, []);
 
-  const isCompleted = useCallback((filename: string) => completed.has(filename), [completed]);
+  const isCompleted = useCallback((filePath: string) => completed.has(filePath), [completed]);
 
-  return { completed, toggleCompleted, isCompleted } as const;
+  return { toggleCompleted, isCompleted } as const;
 }
