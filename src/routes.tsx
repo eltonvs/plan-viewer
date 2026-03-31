@@ -27,7 +27,7 @@ const planRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/plan/$sourceId/$",
   loader: async ({ params }) => {
-    if (params.sourceId === "api" && params._splat) {
+    if (import.meta.env.DEV && params.sourceId === "api" && params._splat) {
       try {
         const plan = await fetchPlan(params._splat);
         return { title: plan.title };

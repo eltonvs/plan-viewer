@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import type { FolderSource } from "@/types/plan";
 
 interface FolderContextValue {
@@ -12,24 +12,10 @@ const FolderContext = createContext<FolderContextValue | null>(null);
 
 const isSupported = "showDirectoryPicker" in window;
 
-export function FolderProvider({ children }: { children: ReactNode }) {
-  const [sources, setSources] = useState<FolderSource[]>([]);
+const initialSources: FolderSource[] = import.meta.env.DEV ? [{ id: "api", label: "plans" }] : [];
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/plans", { signal: AbortSignal.timeout(2000) })
-      .then((res) => {
-        if (!cancelled && res.ok) {
-          setSources((prev) =>
-            prev.some((s) => s.id === "api") ? prev : [{ id: "api", label: "plans" }, ...prev],
-          );
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+export function FolderProvider({ children }: { children: ReactNode }) {
+  const [sources, setSources] = useState<FolderSource[]>(initialSources);
 
   const addFolder = useCallback(async () => {
     try {
