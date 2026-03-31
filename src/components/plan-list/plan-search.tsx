@@ -16,7 +16,7 @@ export function PlanSearch({ value, onChange }: PlanSearchProps) {
       />
       <Input
         aria-label="Search plans"
-        placeholder="Search plans\u2026"
+        placeholder="Search plans…"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="pr-8 pl-9"
