@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { EyeOff, Eye, FolderOpen, Moon, Star, Sun } from "lucide-react";
 import { GithubIcon } from "@/components/common/github-icon";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,11 @@ import { PlanSearch } from "@/components/plan-list/plan-search";
 import { FolderAccordion } from "@/components/plan-list/folder-accordion";
 import { useFolderContext } from "@/context/folder-context";
 
-export function Sidebar() {
+interface SidebarProps {
+  onPlanSelect?: () => void;
+}
+
+export function Sidebar({ onPlanSelect }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideCompleted, setHideCompleted] = useState(false);
   const { data: plans, isLoading } = usePlans();
@@ -70,7 +75,12 @@ export function Sidebar() {
               </span>
             </TooltipContent>
           </Tooltip>
-          <h2 className="font-heading text-base font-semibold">Plan Viewer</h2>
+          <Link
+            to="/"
+            className="font-heading text-base font-semibold transition-colors hover:text-primary"
+          >
+            Plan Viewer
+          </Link>
           {plans && (
             <Badge variant="secondary" className="font-mono text-xs">
               {plans.length}
@@ -124,6 +134,7 @@ export function Sidebar() {
               isCompleted={isCompleted}
               onToggleCompleted={toggleCompleted}
               onRemove={source.id !== "api" ? () => removeFolder(source.id) : undefined}
+              onPlanSelect={onPlanSelect}
             />
           ))
         )}

@@ -3,16 +3,28 @@ import { GithubIcon } from "@/components/common/github-icon";
 import { useFolderContext } from "@/context/folder-context";
 
 export function EmptyState() {
-  const { isSupported, addFolder } = useFolderContext();
+  const { isSupported, sources, addFolder } = useFolderContext();
+  const hasSources = sources.length > 0;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
+    <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-muted-foreground">
       <FileText className="h-16 w-16 stroke-1" />
       <div className="text-center">
-        <p className="text-lg font-medium">Select a plan to view</p>
-        <p className="mt-1 text-sm">Choose a plan from the sidebar to see its contents</p>
+        {hasSources ? (
+          <>
+            <p className="text-lg font-medium">Select a plan to view</p>
+            <p className="mt-1 text-sm">Choose a plan from the sidebar to see its contents</p>
+          </>
+        ) : (
+          <>
+            <p className="text-lg font-medium">Get started</p>
+            <p className="mt-1 text-sm">
+              Open a folder containing your markdown plan files to start browsing
+            </p>
+          </>
+        )}
       </div>
-      <div className="mt-2 flex items-center gap-3">
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
         {isSupported && (
           <button
             type="button"

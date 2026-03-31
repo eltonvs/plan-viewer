@@ -34,9 +34,15 @@ interface PlanListItemProps {
   plan: PlanMeta;
   isCompleted: boolean;
   onToggleCompleted: () => void;
+  onSelect?: () => void;
 }
 
-export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListItemProps) {
+export function PlanListItem({
+  plan,
+  isCompleted,
+  onToggleCompleted,
+  onSelect,
+}: PlanListItemProps) {
   const matchRoute = useMatchRoute();
   const isActive = !!matchRoute({
     to: "/plan/$sourceId/$",
@@ -60,6 +66,7 @@ export function PlanListItem({ plan, isCompleted, onToggleCompleted }: PlanListI
     <Link
       to="/plan/$sourceId/$"
       params={{ sourceId: plan.sourceId, _splat: plan.relativePath }}
+      onClick={onSelect}
       className={cn(
         "group relative block rounded-lg border border-transparent px-3 py-2.5 transition-colors",
         isActive ? "border-primary/30 bg-accent text-accent-foreground" : "hover:bg-muted",

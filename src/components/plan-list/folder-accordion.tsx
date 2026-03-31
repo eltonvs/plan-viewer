@@ -10,6 +10,7 @@ interface FolderAccordionProps {
   isCompleted: (filePath: string) => boolean;
   onToggleCompleted: (filePath: string) => void;
   onRemove?: () => void;
+  onPlanSelect?: () => void;
 }
 
 export function FolderAccordion({
@@ -18,6 +19,7 @@ export function FolderAccordion({
   isCompleted,
   onToggleCompleted,
   onRemove,
+  onPlanSelect,
 }: FolderAccordionProps) {
   const [expanded, setExpanded] = useState(true);
   const [implementedExpanded, setImplementedExpanded] = useState(false);
@@ -71,6 +73,7 @@ export function FolderAccordion({
                 plan={plan}
                 isCompleted={false}
                 onToggleCompleted={() => onToggleCompleted(plan.filePath)}
+                onSelect={onPlanSelect}
               />
             ))}
             {completed.length > 0 && (
@@ -101,6 +104,7 @@ export function FolderAccordion({
                         plan={plan}
                         isCompleted
                         onToggleCompleted={() => onToggleCompleted(plan.filePath)}
+                        onSelect={onPlanSelect}
                       />
                     ))}
                   </div>
