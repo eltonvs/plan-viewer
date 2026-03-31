@@ -16,7 +16,7 @@ function persist(completed: Set<string>) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed]));
 }
 
-let listeners: Array<() => void> = [];
+const listeners = new Set<() => void>();
 let cached: Set<string> | null = null;
 
 function getSnapshot(): Set<string> {
@@ -25,15 +25,15 @@ function getSnapshot(): Set<string> {
 }
 
 function subscribe(callback: () => void): () => void {
-  listeners.push(callback);
+  listeners.add(callback);
   return () => {
-    listeners = listeners.filter((l) => l !== callback);
+    listeners.delete(callback);
   };
 }
 
 function notify() {
   cached = getCompletedSet();
-  listeners.forEach((l) => l());
+  for (const l of listeners) l();
 }
 
 export function useCompletedPlans() {

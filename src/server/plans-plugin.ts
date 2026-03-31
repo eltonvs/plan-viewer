@@ -18,25 +18,23 @@ interface PlanMeta {
 
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 
-function parseFrontmatterName(content: string): string | null {
+function parseFrontmatter(content: string): { name: string | null; body: string } {
   const match = content.match(FRONTMATTER_RE);
-  if (!match) return null;
+  if (!match) return { name: null, body: content };
+  let name: string | null = null;
   for (const line of match[1].split("\n")) {
     const m = line.match(/^name:\s*(.+)/);
-    if (m) return m[1].trim();
+    if (m) {
+      name = m[1].trim();
+      break;
+    }
   }
-  return null;
-}
-
-function stripFrontmatter(content: string): string {
-  const match = content.match(FRONTMATTER_RE);
-  return match ? content.slice(match[0].length) : content;
+  return { name, body: content.slice(match[0].length) };
 }
 
 function extractTitle(content: string, filename: string): string {
-  const name = parseFrontmatterName(content);
+  const { name, body } = parseFrontmatter(content);
   if (name) return name;
-  const body = stripFrontmatter(content);
   const firstLine = body.split("\n").find((line) => line.startsWith("# "));
   if (firstLine) return firstLine.replace(/^#\s+/, "");
   return filename.replace(/\.md$/, "").replace(/-/g, " ");
@@ -100,12 +98,20 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
             fs.stat(filePath),
             fs.readFile(filePath, "utf-8"),
           ]);
+          const { name, body } = parseFrontmatter(content);
+          const title =
+            name ??
+            body
+              .split("\n")
+              .find((line) => line.startsWith("# "))
+              ?.replace(/^#\s+/, "") ??
+            filename.replace(/\.md$/, "").replace(/-/g, " ");
           res.end(
             JSON.stringify({
               filename,
               filePath,
-              title: extractTitle(content, filename),
-              content: stripFrontmatter(content),
+              title,
+              content: body,
               modifiedAt: stat.mtime.toISOString(),
               sizeBytes: stat.size,
             }),

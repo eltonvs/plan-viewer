@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useMemo, useRef, useState } from "react";
 import { List } from "lucide-react";
 import { usePlanContent } from "@/hooks/use-plan-content";
 import { useCompletedPlans } from "@/hooks/use-completed-plans";
@@ -30,8 +30,8 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
   const [outlineVisible, setOutlineVisible] = useState(getInitialOutlineVisible);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const headings = plan ? extractHeadings(plan.content) : [];
-  const headingIds = headings.map((h) => h.id);
+  const headings = useMemo(() => (plan ? extractHeadings(plan.content) : []), [plan?.content]);
+  const headingIds = useMemo(() => headings.map((h) => h.id), [headings]);
   const activeId = useActiveHeading(headingIds, scrollContainerRef);
 
   const toggleOutline = useCallback((visible: boolean) => {
