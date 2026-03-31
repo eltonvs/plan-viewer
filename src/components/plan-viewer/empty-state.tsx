@@ -8,7 +8,7 @@ export function EmptyState() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-muted-foreground">
-      <FileText className="h-16 w-16 stroke-1" />
+      <FileText className="h-16 w-16 stroke-1" aria-hidden="true" />
       <div className="text-center">
         {hasSources ? (
           <>

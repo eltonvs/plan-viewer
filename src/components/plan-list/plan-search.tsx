@@ -9,9 +9,13 @@ interface PlanSearchProps {
 export function PlanSearch({ value, onChange }: PlanSearchProps) {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search
+        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+        aria-hidden="true"
+      />
       <Input
-        placeholder="Search plans..."
+        aria-label="Search plans"
+        placeholder="Search plans\u2026"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="pl-9 pr-8"

@@ -56,7 +56,7 @@ export function PlanHeader({
           <TooltipTrigger
             onClick={onToggleCompleted}
             className={cn(
-              "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
+              "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
               isCompleted
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-muted-foreground/30 text-transparent hover:border-primary/50 hover:text-primary/30",
@@ -96,7 +96,7 @@ export function PlanHeader({
       <div className="flex shrink-0 items-center gap-2">
         <div
           className={cn(
-            "grid transition-all duration-300 ease-in-out",
+            "grid transition-[grid-template-columns,opacity] duration-300 ease-in-out",
             isCompleted ? "grid-cols-[1fr] opacity-100" : "grid-cols-[0fr] opacity-0",
           )}
         >

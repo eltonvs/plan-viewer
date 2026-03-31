@@ -69,7 +69,7 @@ export function OutlinePanel({ headings, activeId, onHeadingClick, onClose }: Ou
           <ChevronsRight className="h-4 w-4" />
         </button>
       </div>
-      <nav className="flex-1 overflow-y-auto px-2 pt-1 pb-4">
+      <nav aria-label="Table of contents" className="flex-1 overflow-y-auto px-2 pt-1 pb-4">
         <ul className="space-y-0.5">
           {headings.map((heading) => (
             <li key={heading.id}>

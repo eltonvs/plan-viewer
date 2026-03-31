@@ -134,16 +134,32 @@ body {
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease,
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+  :focus-visible {
+    @apply ring-2 ring-ring ring-offset-1 ring-offset-background outline-none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
   }
 }

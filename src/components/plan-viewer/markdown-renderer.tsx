@@ -23,7 +23,7 @@ const components: Components = {
   h1: ({ children }) => (
     <h1
       id={slugify(getTextContent(children))}
-      className="mb-4 mt-8 font-heading text-2xl font-bold first:mt-0"
+      className="mb-4 mt-8 scroll-mt-16 font-heading text-2xl font-bold first:mt-0"
     >
       {children}
     </h1>
@@ -31,7 +31,7 @@ const components: Components = {
   h2: ({ children }) => (
     <h2
       id={slugify(getTextContent(children))}
-      className="mb-3 mt-8 border-b border-border pb-2 font-heading text-xl font-semibold"
+      className="mb-3 mt-8 scroll-mt-16 border-b border-border pb-2 font-heading text-xl font-semibold"
     >
       {children}
     </h2>
@@ -39,7 +39,7 @@ const components: Components = {
   h3: ({ children }) => (
     <h3
       id={slugify(getTextContent(children))}
-      className="mb-2 mt-6 font-heading text-lg font-semibold"
+      className="mb-2 mt-6 scroll-mt-16 font-heading text-lg font-semibold"
     >
       {children}
     </h3>
@@ -47,7 +47,7 @@ const components: Components = {
   h4: ({ children }) => (
     <h4
       id={slugify(getTextContent(children))}
-      className="mb-2 mt-4 font-heading text-base font-semibold"
+      className="mb-2 mt-4 scroll-mt-16 font-heading text-base font-semibold"
     >
       {children}
     </h4>
@@ -55,7 +55,7 @@ const components: Components = {
   h5: ({ children }) => (
     <h5
       id={slugify(getTextContent(children))}
-      className="mb-1 mt-3 font-heading text-sm font-semibold"
+      className="mb-1 mt-3 scroll-mt-16 font-heading text-sm font-semibold"
     >
       {children}
     </h5>
@@ -63,7 +63,7 @@ const components: Components = {
   h6: ({ children }) => (
     <h6
       id={slugify(getTextContent(children))}
-      className="mb-1 mt-3 font-heading text-xs font-semibold"
+      className="mb-1 mt-3 scroll-mt-16 font-heading text-xs font-semibold"
     >
       {children}
     </h6>
