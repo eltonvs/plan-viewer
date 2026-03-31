@@ -1,4 +1,5 @@
 import type { PlanDetail, PlanMeta } from "@/types/plan";
+import { extractTitleFromContent, stripFrontmatter } from "@/lib/frontmatter";
 
 declare global {
   interface FileSystemDirectoryHandle {
@@ -8,12 +9,6 @@ declare global {
   interface Window {
     showDirectoryPicker(): Promise<FileSystemDirectoryHandle>;
   }
-}
-
-function extractTitle(content: string, filename: string): string {
-  const firstLine = content.split("\n").find((line) => line.startsWith("# "));
-  if (firstLine) return firstLine.replace(/^#\s+/, "");
-  return filename.replace(/\.md$/, "").replace(/-/g, " ");
 }
 
 export async function walkDirectory(
@@ -33,7 +28,7 @@ export async function walkDirectory(
         relativePath,
         filePath: `${sourceId}/${relativePath}`,
         sourceId,
-        title: extractTitle(content, entry.name),
+        title: extractTitleFromContent(content, entry.name),
         modifiedAt: new Date(file.lastModified).toISOString(),
         sizeBytes: file.size,
       });
@@ -75,8 +70,8 @@ export async function readPlanFromHandle(
     relativePath,
     filePath: `${sourceId}/${relativePath}`,
     sourceId,
-    title: extractTitle(content, filename),
-    content,
+    title: extractTitleFromContent(content, filename),
+    content: stripFrontmatter(content),
     modifiedAt: new Date(file.lastModified).toISOString(),
     sizeBytes: file.size,
   };

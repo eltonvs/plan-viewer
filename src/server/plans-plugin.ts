@@ -16,8 +16,28 @@ interface PlanMeta {
   sizeBytes: number;
 }
 
+const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
+
+function parseFrontmatterName(content: string): string | null {
+  const match = content.match(FRONTMATTER_RE);
+  if (!match) return null;
+  for (const line of match[1].split("\n")) {
+    const m = line.match(/^name:\s*(.+)/);
+    if (m) return m[1].trim();
+  }
+  return null;
+}
+
+function stripFrontmatter(content: string): string {
+  const match = content.match(FRONTMATTER_RE);
+  return match ? content.slice(match[0].length) : content;
+}
+
 function extractTitle(content: string, filename: string): string {
-  const firstLine = content.split("\n").find((line) => line.startsWith("# "));
+  const name = parseFrontmatterName(content);
+  if (name) return name;
+  const body = stripFrontmatter(content);
+  const firstLine = body.split("\n").find((line) => line.startsWith("# "));
   if (firstLine) return firstLine.replace(/^#\s+/, "");
   return filename.replace(/\.md$/, "").replace(/-/g, " ");
 }
@@ -85,7 +105,7 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
               filename,
               filePath,
               title: extractTitle(content, filename),
-              content,
+              content: stripFrontmatter(content),
               modifiedAt: stat.mtime.toISOString(),
               sizeBytes: stat.size,
             }),
