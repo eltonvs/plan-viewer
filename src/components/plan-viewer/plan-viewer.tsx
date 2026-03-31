@@ -87,6 +87,7 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
                 "transition-[margin] duration-300 ease-in-out",
                 showOutline ? "mr-0" : "-mr-56 xl:-mr-72 2xl:-mr-80",
               )}
+              inert={!showOutline ? true : undefined}
             >
               <OutlinePanel
                 headings={headings}
