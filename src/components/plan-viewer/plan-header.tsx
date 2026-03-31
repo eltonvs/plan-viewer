@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Check, Circle, Copy, X } from "lucide-react";
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "@tanstack/react-router";
 
 interface PlanHeaderProps {
   title: string;
@@ -50,7 +51,7 @@ export function PlanHeader({
   }
 
   return (
-    <div className="flex items-center justify-between border-b border-border px-6 py-4">
+    <div className="border-border flex items-center justify-between border-b px-6 py-4">
       <div className="flex min-w-0 items-center gap-3">
         <Tooltip>
           <TooltipTrigger
@@ -79,14 +80,14 @@ export function PlanHeader({
             {title}
           </h1>
           <div className="group/path mt-0.5 flex items-center gap-1">
-            <p className="truncate font-mono text-xs text-muted-foreground">{relativePath}</p>
+            <p className="text-muted-foreground truncate font-mono text-xs">{relativePath}</p>
             <Tooltip>
               <TooltipTrigger
                 onClick={handleCopy}
-                className="shrink-0 rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/path:opacity-100"
+                className="text-muted-foreground hover:text-foreground shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover/path:opacity-100"
                 aria-label="Copy path"
               >
-                {copied ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+                {copied ? <Check className="text-primary h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </TooltipTrigger>
               <TooltipContent>{copied ? "Copied!" : "Copy path"}</TooltipContent>
             </Tooltip>
@@ -101,7 +102,7 @@ export function PlanHeader({
           )}
         >
           <div className="overflow-hidden">
-            <Badge className="whitespace-nowrap bg-primary/15 text-primary hover:bg-primary/15">
+            <Badge className="bg-primary/15 text-primary hover:bg-primary/15 whitespace-nowrap">
               <Circle className="mr-1 h-2 w-2 fill-current" />
               Implemented
             </Badge>
@@ -110,11 +111,11 @@ export function PlanHeader({
         <Badge variant="secondary" className="font-mono text-xs">
           {formatBytes(sizeBytes)}
         </Badge>
-        <span className="text-xs text-muted-foreground">{formatRelativeTime(modifiedAt)}</span>
+        <span className="text-muted-foreground text-xs">{formatRelativeTime(modifiedAt)}</span>
         <Tooltip>
           <TooltipTrigger
             onClick={() => navigate({ to: "/" })}
-            className="ml-1 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground ml-1 rounded-md p-1 transition-colors"
             aria-label="Close plan"
           >
             <X className="h-4 w-4" />

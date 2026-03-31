@@ -1,15 +1,17 @@
-import { useState, useCallback } from "react";
 import { Outlet } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
-import { Sidebar } from "./sidebar";
+import { useState, useCallback } from "react";
+
 import { cn } from "@/lib/utils";
+
+import { Sidebar } from "./sidebar";
 
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="bg-background flex h-screen overflow-hidden">
       {sidebarOpen && (
         <div className="fixed inset-0 z-30 bg-black/40 lg:hidden" onClick={closeSidebar} />
       )}
@@ -25,10 +27,10 @@ export function AppShell() {
 
       <main className="flex-1 overflow-hidden">
         {!sidebarOpen && (
-          <div className="flex items-center gap-2 border-b border-border px-3 py-2 lg:hidden">
+          <div className="border-border flex items-center gap-2 border-b px-3 py-2 lg:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1.5 transition-colors"
               aria-label="Open sidebar"
             >
               <Menu className="h-5 w-5" />

@@ -1,5 +1,5 @@
-import type { PlanDetail, PlanMeta } from "@/types/plan";
 import { extractTitleFromContent, stripFrontmatter } from "@/lib/frontmatter";
+import type { PlanDetail, PlanMeta } from "@/types/plan";
 
 declare global {
   interface FileSystemDirectoryHandle {

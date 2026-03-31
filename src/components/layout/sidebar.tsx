@@ -1,16 +1,17 @@
-import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { EyeOff, Eye, FolderOpen, Moon, Star, Sun } from "lucide-react";
+import { useMemo, useState } from "react";
+
 import { GithubIcon } from "@/components/common/github-icon";
+import { FolderAccordion } from "@/components/plan-list/folder-accordion";
+import { PlanSearch } from "@/components/plan-list/plan-search";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useFolderContext } from "@/context/folder-context";
+import { useCompletedPlans } from "@/hooks/use-completed-plans";
 import { usePlans } from "@/hooks/use-plans";
 import { useTheme } from "@/hooks/use-theme";
-import { useCompletedPlans } from "@/hooks/use-completed-plans";
-import { PlanSearch } from "@/components/plan-list/plan-search";
-import { FolderAccordion } from "@/components/plan-list/folder-accordion";
-import { useFolderContext } from "@/context/folder-context";
 
 interface SidebarProps {
   onPlanSelect?: () => void;
@@ -52,7 +53,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
   }, [plans, sources, searchQuery, hideCompleted, isCompleted]);
 
   return (
-    <div className="flex h-full w-80 flex-col border-r border-border bg-sidebar">
+    <div className="border-border bg-sidebar flex h-full w-80 flex-col border-r">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -64,7 +65,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
                   rel="noopener noreferrer"
                 />
               }
-              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1 transition-colors"
               aria-label="Star on GitHub"
             >
               <GithubIcon className="h-4 w-4" />
@@ -77,7 +78,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
           </Tooltip>
           <Link
             to="/"
-            className="font-heading text-base font-semibold transition-colors hover:text-primary"
+            className="font-heading hover:text-primary text-base font-semibold transition-colors"
           >
             Plan Viewer
           </Link>
@@ -92,7 +93,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
             <Tooltip>
               <TooltipTrigger
                 onClick={() => setHideCompleted((v) => !v)}
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1.5 transition-colors"
                 aria-label={hideCompleted ? "Show implemented plans" : "Hide implemented plans"}
               >
                 {hideCompleted ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -105,7 +106,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
           <Tooltip>
             <TooltipTrigger
               onClick={toggleTheme}
-              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1.5 transition-colors"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -122,7 +123,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
         {isLoading ? (
           <div className="space-y-2 p-3">
             {Array.from({ length: 5 }, (_, i) => (
-              <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
+              <div key={i} className="bg-muted h-14 animate-pulse rounded-lg" />
             ))}
           </div>
         ) : (
@@ -146,7 +147,7 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
             <button
               type="button"
               onClick={() => void addFolder()}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex w-full items-center justify-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-xs transition-colors"
             >
               <FolderOpen className="h-3.5 w-3.5" />
               Open Folder

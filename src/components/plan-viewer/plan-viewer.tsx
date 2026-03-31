@@ -1,14 +1,16 @@
-import { Suspense, lazy, useCallback, useMemo, useRef, useState } from "react";
 import { List } from "lucide-react";
-import { usePlanContent } from "@/hooks/use-plan-content";
-import { useCompletedPlans } from "@/hooks/use-completed-plans";
-import { useActiveHeading } from "@/hooks/use-active-heading";
-import { extractHeadings } from "@/lib/headings";
-import { cn } from "@/lib/utils";
-import { PlanHeader } from "./plan-header";
-import { OutlinePanel } from "./outline-panel";
+import { Suspense, lazy, useCallback, useMemo, useRef, useState } from "react";
+
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useActiveHeading } from "@/hooks/use-active-heading";
+import { useCompletedPlans } from "@/hooks/use-completed-plans";
+import { usePlanContent } from "@/hooks/use-plan-content";
+import { extractHeadings } from "@/lib/headings";
+import { cn } from "@/lib/utils";
+
+import { OutlinePanel } from "./outline-panel";
+import { PlanHeader } from "./plan-header";
 
 const MarkdownRenderer = lazy(() =>
   import("./markdown-renderer").then((m) => ({ default: m.MarkdownRenderer })),
@@ -51,7 +53,7 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
   if (isLoading) return <LoadingSkeleton />;
   if (error || !plan) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
+      <div className="text-muted-foreground flex h-full items-center justify-center">
         <p>Failed to load plan: {relativePath}</p>
       </div>
     );
@@ -97,7 +99,7 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
               <Tooltip>
                 <TooltipTrigger
                   onClick={() => toggleOutline(true)}
-                  className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground absolute top-3 right-3 rounded-md p-1.5 transition-colors"
                   aria-label="Show outline"
                 >
                   <List className="h-4 w-4" />

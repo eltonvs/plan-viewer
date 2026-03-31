@@ -1,6 +1,7 @@
-import type { MouseEvent } from "react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { Check, Circle } from "lucide-react";
+import type { MouseEvent } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -75,14 +76,14 @@ export function PlanListItem({
     >
       <div className="flex items-start gap-2">
         {isCompleted ? (
-          <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+          <span className="bg-primary/15 text-primary mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full">
             <Check className="h-2.5 w-2.5" strokeWidth={3} />
           </span>
         ) : (
           <Tooltip>
             <TooltipTrigger
               onClick={handleToggle}
-              className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground/30 text-transparent opacity-0 transition-opacity group-hover:opacity-100 hover:border-primary/50 hover:text-primary/40"
+              className="border-muted-foreground/30 hover:border-primary/50 hover:text-primary/40 mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border text-transparent opacity-0 transition-opacity group-hover:opacity-100"
               aria-label="Mark as implemented"
             >
               <Circle className="h-2.5 w-2.5" />
@@ -101,11 +102,11 @@ export function PlanListItem({
           </p>
           <div className="mt-1 flex items-center gap-2">
             {hasSubfolder && (
-              <span className="truncate text-xs text-muted-foreground/60">
+              <span className="text-muted-foreground/60 truncate text-xs">
                 {plan.relativePath.split("/").slice(0, -1).join("/")}
               </span>
             )}
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {formatRelativeTime(plan.modifiedAt)}
             </span>
             <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">

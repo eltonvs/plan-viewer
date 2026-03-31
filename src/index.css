@@ -151,7 +151,7 @@ body {
     touch-action: manipulation;
   }
   :focus-visible {
-    @apply ring-2 ring-ring ring-offset-1 ring-offset-background outline-none;
+    @apply ring-ring ring-offset-background ring-2 ring-offset-1 outline-none;
   }
 }
 

@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+
+import { useFolderContext } from "@/context/folder-context";
 import { fetchPlans } from "@/lib/api";
 import { walkDirectory } from "@/lib/fs-source";
-import { useFolderContext } from "@/context/folder-context";
 
 export function usePlans() {
   const { sources } = useFolderContext();

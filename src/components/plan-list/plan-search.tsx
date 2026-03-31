@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 
 interface PlanSearchProps {
@@ -10,7 +11,7 @@ export function PlanSearch({ value, onChange }: PlanSearchProps) {
   return (
     <div className="relative">
       <Search
-        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+        className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
         aria-hidden="true"
       />
       <Input
@@ -18,12 +19,12 @@ export function PlanSearch({ value, onChange }: PlanSearchProps) {
         placeholder="Search plans\u2026"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-9 pr-8"
+        className="pr-8 pl-9"
       />
       {value && (
         <button
           onClick={() => onChange("")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 rounded-sm p-0.5 transition-colors"
           aria-label="Clear search"
         >
           <X className="h-3.5 w-3.5" />

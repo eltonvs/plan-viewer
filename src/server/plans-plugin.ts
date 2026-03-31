@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
-import path from "node:path";
 import os from "node:os";
+import path from "node:path";
+
 import type { Plugin, Connect } from "vite";
 
 const DEFAULT_PLANS_DIR = path.join(os.homedir(), ".claude", "plans");

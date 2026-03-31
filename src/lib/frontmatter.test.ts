@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
+
 import { extractTitleFromContent, parseFrontmatter, stripFrontmatter } from "./frontmatter";
 
 describe("parseFrontmatter", () => {

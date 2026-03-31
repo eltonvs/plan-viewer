@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
+
 import { slugify, extractHeadings } from "./headings";
 
 describe("slugify", () => {

@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
 import { ChevronsRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
+
 import type { HeadingItem } from "@/lib/headings";
+import { cn } from "@/lib/utils";
 
 function renderInlineMarkdown(text: string): ReactNode {
   const parts: ReactNode[] = [];
@@ -18,7 +19,7 @@ function renderInlineMarkdown(text: string): ReactNode {
       parts.push(
         <code
           key={match.index}
-          className="break-all rounded bg-muted px-1 py-0.5 font-mono text-xs"
+          className="bg-muted rounded px-1 py-0.5 font-mono text-xs break-all"
         >
           {m.slice(1, -1)}
         </code>,
@@ -56,14 +57,14 @@ interface OutlinePanelProps {
 
 export function OutlinePanel({ headings, activeId, onHeadingClick, onClose }: OutlinePanelProps) {
   return (
-    <div className="flex w-56 shrink-0 flex-col border-l border-border xl:w-72 2xl:w-80">
+    <div className="border-border flex w-56 shrink-0 flex-col border-l xl:w-72 2xl:w-80">
       <div className="flex items-center justify-between px-3 py-2">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           Outline
         </span>
         <button
           onClick={onClose}
-          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1 transition-colors"
           aria-label="Close outline"
         >
           <ChevronsRight className="h-4 w-4" />

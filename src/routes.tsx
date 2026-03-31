@@ -1,4 +1,5 @@
 import { createRouter, createRoute, createRootRoute, HeadContent } from "@tanstack/react-router";
+
 import { AppShell } from "@/components/layout/app-shell";
 import { EmptyState } from "@/components/plan-viewer/empty-state";
 import { PlanViewer } from "@/components/plan-viewer/plan-viewer";

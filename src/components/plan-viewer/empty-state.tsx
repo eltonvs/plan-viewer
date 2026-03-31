@@ -1,4 +1,5 @@
 import { FileText, FolderOpen, Star } from "lucide-react";
+
 import { GithubIcon } from "@/components/common/github-icon";
 import { useFolderContext } from "@/context/folder-context";
 
@@ -7,7 +8,7 @@ export function EmptyState() {
   const hasSources = sources.length > 0;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-muted-foreground">
+    <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-4 px-6">
       <FileText className="h-16 w-16 stroke-1" aria-hidden="true" />
       <div className="text-center">
         {hasSources ? (
@@ -29,7 +30,7 @@ export function EmptyState() {
           <button
             type="button"
             onClick={() => void addFolder()}
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+            className="border-border bg-background text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium shadow-sm transition-colors"
           >
             <FolderOpen className="h-4 w-4" />
             Open Folder
@@ -39,7 +40,7 @@ export function EmptyState() {
           href="https://github.com/eltonvs/plan-viewer"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+          className="border-border bg-background text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium shadow-sm transition-colors"
         >
           <GithubIcon className="h-4 w-4" />
           <Star className="h-3.5 w-3.5" />
