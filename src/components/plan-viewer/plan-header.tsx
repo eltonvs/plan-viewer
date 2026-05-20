@@ -2,9 +2,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { Check, Circle, Copy, X } from "lucide-react";
 import { useState } from "react";
 
+import { FileTypeBadge } from "@/components/common/file-type-badge";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import type { PlanFileType } from "@/types/plan";
 
 interface PlanHeaderProps {
   title: string;
@@ -14,6 +16,7 @@ interface PlanHeaderProps {
   sizeBytes: number;
   isCompleted: boolean;
   onToggleCompleted: () => void;
+  fileType: PlanFileType;
 }
 
 function formatBytes(bytes: number): string {
@@ -40,6 +43,7 @@ export function PlanHeader({
   sizeBytes,
   isCompleted,
   onToggleCompleted,
+  fileType,
 }: PlanHeaderProps) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -108,6 +112,7 @@ export function PlanHeader({
             </Badge>
           </div>
         </div>
+        <FileTypeBadge fileType={fileType} />
         <Badge variant="secondary" className="font-mono text-xs">
           {formatBytes(sizeBytes)}
         </Badge>

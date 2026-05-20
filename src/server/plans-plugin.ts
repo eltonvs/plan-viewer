@@ -4,6 +4,14 @@ import path from "node:path";
 
 import type { Plugin, Connect } from "vite";
 
+import {
+  extractTitleFromContent,
+  extractTitleFromHtml,
+  stripFrontmatter,
+} from "../lib/frontmatter.ts";
+import { fileTypeFromName } from "../lib/plan-file-type.ts";
+import type { PlanFileType } from "../types/plan.ts";
+
 const DEFAULT_PLANS_DIR = path.join(os.homedir(), ".claude", "plans");
 
 interface PlansApiOptions {
@@ -15,30 +23,13 @@ interface PlanMeta {
   title: string;
   modifiedAt: string;
   sizeBytes: number;
+  fileType: PlanFileType;
 }
 
-const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
-
-function parseFrontmatter(content: string): { name: string | null; body: string } {
-  const match = content.match(FRONTMATTER_RE);
-  if (!match) return { name: null, body: content };
-  let name: string | null = null;
-  for (const line of match[1].split("\n")) {
-    const m = line.match(/^name:\s*(.+)/);
-    if (m) {
-      name = m[1].trim();
-      break;
-    }
-  }
-  return { name, body: content.slice(match[0].length) };
-}
-
-function extractTitle(content: string, filename: string): string {
-  const { name, body } = parseFrontmatter(content);
-  if (name) return name;
-  const firstLine = body.split("\n").find((line) => line.startsWith("# "));
-  if (firstLine) return firstLine.replace(/^#\s+/, "");
-  return filename.replace(/\.md$/, "").replace(/-/g, " ");
+function extractTitle(content: string, filename: string, fileType: PlanFileType): string {
+  return fileType === "html"
+    ? extractTitleFromHtml(content, filename)
+    : extractTitleFromContent(content, filename);
 }
 
 function createMiddleware(plansDir: string): Connect.NextHandleFunction {
@@ -51,17 +42,20 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
     try {
       // GET /api/plans — list all plans
       if (req.url === "/api/plans" || req.url === "/api/plans/") {
-        let files: string[];
+        let entries: { filename: string; fileType: PlanFileType }[];
         try {
-          const entries = await fs.readdir(plansDir);
-          files = entries.filter((f) => f.endsWith(".md"));
+          const names = await fs.readdir(plansDir);
+          entries = names.flatMap((filename) => {
+            const fileType = fileTypeFromName(filename);
+            return fileType ? [{ filename, fileType }] : [];
+          });
         } catch {
           res.end(JSON.stringify([]));
           return;
         }
 
         const plans: PlanMeta[] = await Promise.all(
-          files.map(async (filename) => {
+          entries.map(async ({ filename, fileType }) => {
             const filePath = path.join(plansDir, filename);
             const [stat, content] = await Promise.all([
               fs.stat(filePath),
@@ -70,9 +64,10 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
             return {
               filename,
               filePath,
-              title: extractTitle(content, filename),
+              title: extractTitle(content, filename, fileType),
               modifiedAt: stat.mtime.toISOString(),
               sizeBytes: stat.size,
+              fileType,
             };
           }),
         );
@@ -92,6 +87,12 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
           res.end(JSON.stringify({ error: "Invalid filename" }));
           return;
         }
+        const fileType = fileTypeFromName(filename);
+        if (!fileType) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: "Unsupported file type" }));
+          return;
+        }
 
         const filePath = path.join(plansDir, filename);
         try {
@@ -99,22 +100,16 @@ function createMiddleware(plansDir: string): Connect.NextHandleFunction {
             fs.stat(filePath),
             fs.readFile(filePath, "utf-8"),
           ]);
-          const { name, body } = parseFrontmatter(content);
-          const title =
-            name ??
-            body
-              .split("\n")
-              .find((line) => line.startsWith("# "))
-              ?.replace(/^#\s+/, "") ??
-            filename.replace(/\.md$/, "").replace(/-/g, " ");
+          const body = fileType === "html" ? content : stripFrontmatter(content);
           res.end(
             JSON.stringify({
               filename,
               filePath,
-              title,
+              title: extractTitle(content, filename, fileType),
               content: body,
               modifiedAt: stat.mtime.toISOString(),
               sizeBytes: stat.size,
+              fileType,
             }),
           );
         } catch {

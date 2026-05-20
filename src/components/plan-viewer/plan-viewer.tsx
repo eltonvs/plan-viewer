@@ -9,6 +9,7 @@ import { usePlanContent } from "@/hooks/use-plan-content";
 import { extractHeadings } from "@/lib/headings";
 import { cn } from "@/lib/utils";
 
+import { HtmlRenderer } from "./html-renderer";
 import { OutlinePanel } from "./outline-panel";
 import { PlanHeader } from "./plan-header";
 
@@ -32,7 +33,11 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
   const [outlineVisible, setOutlineVisible] = useState(getInitialOutlineVisible);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const headings = useMemo(() => (plan ? extractHeadings(plan.content) : []), [plan?.content]);
+  const isHtml = plan?.fileType === "html";
+  const headings = useMemo(
+    () => (plan && !isHtml ? extractHeadings(plan.content) : []),
+    [plan?.content, isHtml],
+  );
   const headingIds = useMemo(() => headings.map((h) => h.id), [headings]);
   const activeId = useActiveHeading(headingIds, scrollContainerRef);
 
@@ -71,14 +76,19 @@ export function PlanViewer({ sourceId, relativePath }: PlanViewerProps) {
         sizeBytes={plan.sizeBytes}
         isCompleted={isCompleted(plan.filePath)}
         onToggleCompleted={() => toggleCompleted(plan.filePath)}
+        fileType={plan.fileType}
       />
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-4xl px-6 py-6">
-            <Suspense fallback={<LoadingSkeleton />}>
-              <MarkdownRenderer content={plan.content} />
-            </Suspense>
-          </div>
+          {isHtml ? (
+            <HtmlRenderer content={plan.content} title={plan.title} />
+          ) : (
+            <div className="mx-auto max-w-4xl px-6 py-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <MarkdownRenderer content={plan.content} />
+              </Suspense>
+            </div>
+          )}
         </div>
         {headings.length > 0 && (
           <>

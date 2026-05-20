@@ -2,14 +2,15 @@ import { Link, useMatchRoute } from "@tanstack/react-router";
 import { Check, Circle } from "lucide-react";
 import type { MouseEvent } from "react";
 
+import { FileTypeBadge } from "@/components/common/file-type-badge";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { stripPlanExtension } from "@/lib/plan-file-type";
 import { cn } from "@/lib/utils";
 import type { PlanMeta } from "@/types/plan";
 
 function humanizeFilename(filename: string): string {
-  return filename
-    .replace(/\.md$/, "")
+  return stripPlanExtension(filename)
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -51,7 +52,7 @@ export function PlanListItem({
   });
 
   const displayTitle =
-    plan.title !== plan.filename.replace(/\.md$/, "").replaceAll("-", " ")
+    plan.title !== stripPlanExtension(plan.filename).replaceAll("-", " ")
       ? plan.title
       : humanizeFilename(plan.filename);
 
@@ -109,6 +110,7 @@ export function PlanListItem({
             <span className="text-muted-foreground text-xs">
               {formatRelativeTime(plan.modifiedAt)}
             </span>
+            <FileTypeBadge fileType={plan.fileType} />
             <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">
               {formatBytes(plan.sizeBytes)}
             </Badge>

@@ -1,9 +1,12 @@
+import type { PlanFileType } from "@/types/plan";
+
 export interface ApiPlanMeta {
   filename: string;
   filePath: string;
   title: string;
   modifiedAt: string;
   sizeBytes: number;
+  fileType: PlanFileType;
 }
 
 export interface ApiPlanDetail extends ApiPlanMeta {

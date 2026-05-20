@@ -4,6 +4,8 @@ export interface FolderSource {
   handle?: FileSystemDirectoryHandle;
 }
 
+export type PlanFileType = "md" | "html";
+
 export interface PlanMeta {
   filename: string;
   relativePath: string;
@@ -12,6 +14,7 @@ export interface PlanMeta {
   title: string;
   modifiedAt: string;
   sizeBytes: number;
+  fileType: PlanFileType;
 }
 
 export interface PlanDetail extends PlanMeta {

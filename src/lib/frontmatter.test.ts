@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import { extractTitleFromContent, parseFrontmatter, stripFrontmatter } from "./frontmatter";
+import {
+  extractTitleFromContent,
+  extractTitleFromHtml,
+  parseFrontmatter,
+  stripFrontmatter,
+} from "./frontmatter";
 
 describe("parseFrontmatter", () => {
   test("parses YAML frontmatter", () => {
@@ -56,5 +61,49 @@ describe("extractTitleFromContent", () => {
   test("uses heading from body, not from frontmatter block", () => {
     const content = "# Real Title\nContent here";
     expect(extractTitleFromContent(content, "file.md")).toBe("Real Title");
+  });
+
+  test("strips .html extension in filename fallback", () => {
+    expect(extractTitleFromContent("plain text", "my-page.HTML")).toBe("my page");
+  });
+});
+
+describe("extractTitleFromHtml", () => {
+  test("uses <title> when present", () => {
+    expect(extractTitleFromHtml("<html><head><title>My Page</title></head>", "f.html")).toBe(
+      "My Page",
+    );
+  });
+
+  test("trims whitespace in <title>", () => {
+    expect(extractTitleFromHtml("<title>  Spaced  </title>", "f.html")).toBe("Spaced");
+  });
+
+  test("handles uppercase <TITLE>", () => {
+    expect(extractTitleFromHtml("<TITLE>Loud</TITLE>", "f.html")).toBe("Loud");
+  });
+
+  test("falls back to <h1> when no <title>", () => {
+    expect(extractTitleFromHtml("<h1>Heading</h1>", "f.html")).toBe("Heading");
+  });
+
+  test("strips nested tags inside <h1>", () => {
+    expect(extractTitleFromHtml("<h1>Hello <span>World</span></h1>", "f.html")).toBe("Hello World");
+  });
+
+  test("handles <h1> with attributes", () => {
+    expect(extractTitleFromHtml('<h1 class="x" id="y">Title</h1>', "f.html")).toBe("Title");
+  });
+
+  test("falls back to humanized filename when no <title> or <h1>", () => {
+    expect(extractTitleFromHtml("<p>nope</p>", "my-page.html")).toBe("my page");
+  });
+
+  test("filename fallback works for .htm too", () => {
+    expect(extractTitleFromHtml("<p>nope</p>", "my-page.htm")).toBe("my page");
+  });
+
+  test("empty <title> falls through to <h1>", () => {
+    expect(extractTitleFromHtml("<title>   </title><h1>Real</h1>", "f.html")).toBe("Real");
   });
 });

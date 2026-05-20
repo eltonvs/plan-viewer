@@ -1,4 +1,5 @@
-import { extractTitleFromContent, stripFrontmatter } from "@/lib/frontmatter";
+import { extractTitleFromContent, extractTitleFromHtml, stripFrontmatter } from "@/lib/frontmatter";
+import { fileTypeFromName } from "@/lib/plan-file-type";
 import type { PlanDetail, PlanMeta } from "@/types/plan";
 
 declare global {
@@ -19,7 +20,8 @@ export async function walkDirectory(
   const plans: PlanMeta[] = [];
 
   for await (const entry of handle.values()) {
-    if (entry.kind === "file" && entry.name.endsWith(".md")) {
+    const fileType = entry.kind === "file" ? fileTypeFromName(entry.name) : null;
+    if (entry.kind === "file" && fileType) {
       const file = await (entry as FileSystemFileHandle).getFile();
       const content = await file.text();
       const relativePath = prefix + entry.name;
@@ -28,9 +30,13 @@ export async function walkDirectory(
         relativePath,
         filePath: `${sourceId}/${relativePath}`,
         sourceId,
-        title: extractTitleFromContent(content, entry.name),
+        title:
+          fileType === "html"
+            ? extractTitleFromHtml(content, entry.name)
+            : extractTitleFromContent(content, entry.name),
         modifiedAt: new Date(file.lastModified).toISOString(),
         sizeBytes: file.size,
+        fileType,
       });
     } else if (entry.kind === "directory") {
       const subHandle = entry as FileSystemDirectoryHandle;
@@ -64,15 +70,21 @@ export async function readPlanFromHandle(
   const file = await fileHandle.getFile();
   const content = await file.text();
   const filename = relativePath.split("/").pop()!;
+  const fileType = fileTypeFromName(filename);
+  if (!fileType) throw new Error(`Unsupported plan file: ${filename}`);
+  const isHtml = fileType === "html";
 
   return {
     filename,
     relativePath,
     filePath: `${sourceId}/${relativePath}`,
     sourceId,
-    title: extractTitleFromContent(content, filename),
-    content: stripFrontmatter(content),
+    title: isHtml
+      ? extractTitleFromHtml(content, filename)
+      : extractTitleFromContent(content, filename),
+    content: isHtml ? content : stripFrontmatter(content),
     modifiedAt: new Date(file.lastModified).toISOString(),
     sizeBytes: file.size,
+    fileType,
   };
 }

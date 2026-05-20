@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/plan-viewer/empty-state";
 import { PlanViewer } from "@/components/plan-viewer/plan-viewer";
 import { fetchPlan } from "@/lib/api";
 import { extractTitleFromContent } from "@/lib/frontmatter";
+import { stripPlanExtension } from "@/lib/plan-file-type";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -36,7 +37,7 @@ const planRoute = createRoute({
         return { title: extractTitleFromContent("", params._splat) };
       }
     }
-    return { title: params._splat?.replace(/\.md$/, "").replace(/-/g, " ") ?? "Plan" };
+    return { title: params._splat ? stripPlanExtension(params._splat).replace(/-/g, " ") : "Plan" };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.title} — Plan Viewer` : "Plan Viewer" }],
