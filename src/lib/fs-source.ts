@@ -2,10 +2,17 @@ import { extractTitleFromContent, extractTitleFromHtml, stripFrontmatter } from 
 import { fileTypeFromName } from "@/lib/plan-file-type";
 import type { PlanDetail, PlanMeta } from "@/types/plan";
 
+type PermissionState = "granted" | "denied" | "prompt";
+interface HandlePermissionDescriptor {
+  mode?: "read" | "readwrite";
+}
+
 declare global {
   interface FileSystemDirectoryHandle {
     values(): AsyncIterableIterator<FileSystemHandle>;
     getDirectoryHandle(name: string): Promise<FileSystemDirectoryHandle>;
+    queryPermission(descriptor?: HandlePermissionDescriptor): Promise<PermissionState>;
+    requestPermission(descriptor?: HandlePermissionDescriptor): Promise<PermissionState>;
   }
   interface Window {
     showDirectoryPicker(): Promise<FileSystemDirectoryHandle>;

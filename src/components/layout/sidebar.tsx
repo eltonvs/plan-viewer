@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { EyeOff, Eye, FolderOpen, Moon, Star, Sun } from "lucide-react";
+import { EyeOff, Eye, FolderOpen, Moon, Plug, Star, Sun, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { GithubIcon } from "@/components/common/github-icon";
@@ -23,7 +23,8 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
   const { data: plans, isLoading } = usePlans();
   const { theme, toggleTheme } = useTheme();
   const { isCompleted, toggleCompleted } = useCompletedPlans();
-  const { sources, isSupported, addFolder, removeFolder } = useFolderContext();
+  const { sources, isSupported, addFolder, removeFolder, reconnectFolder, pendingReconnect } =
+    useFolderContext();
 
   const completedCount = plans?.filter((p) => isCompleted(p.filePath)).length ?? 0;
 
@@ -143,6 +144,33 @@ export function Sidebar({ onPlanSelect }: SidebarProps) {
       {isSupported && (
         <>
           <Separator />
+          {pendingReconnect.length > 0 && (
+            <div className="space-y-1 px-3 pt-2">
+              {pendingReconnect.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-xs"
+                >
+                  <button
+                    type="button"
+                    onClick={() => void reconnectFolder(s.id)}
+                    className="flex flex-1 items-center gap-1.5 rounded px-1 py-0.5 text-amber-700 hover:bg-amber-500/10 dark:text-amber-400"
+                  >
+                    <Plug className="h-3 w-3" />
+                    <span className="truncate">Reconnect {s.label}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeFolder(s.id)}
+                    className="text-muted-foreground hover:text-foreground rounded p-0.5"
+                    aria-label="Dismiss"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="px-4 py-2.5">
             <button
               type="button"

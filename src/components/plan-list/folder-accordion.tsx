@@ -34,7 +34,7 @@ export function FolderAccordion({
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="hover:bg-muted flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium transition-colors"
+        className="group hover:bg-muted flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium transition-colors"
       >
         {expanded ? (
           <ChevronDown className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
@@ -45,20 +45,24 @@ export function FolderAccordion({
         <span className="text-muted-foreground ml-auto shrink-0 text-xs">
           {active.length}/{plans.length}
         </span>
-        {onRemove && (
+        {onRemove ? (
           <Tooltip>
             <TooltipTrigger
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
               }}
-              className="text-muted-foreground hover:text-foreground shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100 [button:hover>&]:opacity-100"
+              className="text-muted-foreground hover:text-foreground shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
               aria-label="Remove folder"
             >
               <X className="h-3 w-3" />
             </TooltipTrigger>
             <TooltipContent>Remove folder</TooltipContent>
           </Tooltip>
+        ) : (
+          <span aria-hidden className="shrink-0 p-0.5">
+            <X className="h-3 w-3 opacity-0" />
+          </span>
         )}
       </button>
       <div
